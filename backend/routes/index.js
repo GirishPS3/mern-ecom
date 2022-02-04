@@ -12,7 +12,4 @@ router.use('/api/v1/user', userRoute);
 router.use('/api/v1/payment', paymentRoute);
 router.use('/api/v1/', AuthenticateUser, orderRoute);
 
-router.get('/', helloWorld);
-
-
 module.exports = router;
