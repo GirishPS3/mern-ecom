@@ -1,65 +1,79 @@
-import { Button, TextField, Paper, Grid } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { Button, Paper, TextField } from "@material-ui/core";
+import { useSnackbar } from "notistack";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
+import styled from "styled-components";
 import { clearErrors, login, register } from "../../store/actions/user";
-import { useHistory } from "react-router-dom";
-import Loader from '../common/Loader';
-import { useSnackbar } from 'notistack';
+import Loader from "../common/Loader";
 
-export default function Signup({ }) {
+export default function Signup({}) {
   const [selectedTab, setTab] = useState(0);
   const navigate = useHistory();
   const { enqueueSnackbar } = useSnackbar();
   const [loginData, setloginData] = useState({ email: "", password: "" });
-  const [signInData, setsignInData] = useState({ email: "", password: "", confirmPassword: "", name: "", profileImg: "" })
+  const [signInData, setsignInData] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+    name: "",
+    profileImg: "",
+  });
   const dispatch = useDispatch();
-  const { user, loading, isAuthenticated, error } = useSelector(state => state.user);
+  const { user, loading, isAuthenticated, error } = useSelector(
+    (state) => state.user
+  );
 
   const handleLoginForm = (e) => {
-    setloginData({ ...loginData, [e.target.name]: e.target.value })
+    setloginData({ ...loginData, [e.target.name]: e.target.value });
   };
 
   const handleSignInForm = (e) => {
-    let value = e.target.files ? e.target.files[0] : e.target.value;
-    setsignInData({ ...signInData, [e.target.name]: value })
+    if (e.target.name === "profileImg") {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          setsignInData({ ...signInData, [e.target.name]: reader.result });
+        }
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    } else {
+      setsignInData({ ...signInData, [e.target.name]: e.target.value });
+    }
   };
 
   const loginUser = () => {
     const { email, password } = loginData;
     const isValid = true;
     if (!email) {
-      enqueueSnackbar('email required', { variant: 'error' });
+      enqueueSnackbar("email required", { variant: "error" });
       isValid = false;
     }
     if (!password) {
-      enqueueSnackbar('password required', { variant: 'error' });
+      enqueueSnackbar("password required", { variant: "error" });
       isValid = false;
     }
     if (isValid) {
       dispatch(login(loginData.email, loginData.password));
     }
-  }
+  };
   const registerUser = () => {
     const { email, name, password, confirmPassword, profileImg } = signInData;
     if (!email) {
       return;
-
     }
     if (!name) {
       return;
-
     }
     if (!password) {
       return;
-
     }
     if (!confirmPassword) {
       return;
     }
     if (password !== confirmPassword) {
-      return
+      return;
     }
     let formData = new FormData();
     formData.set("email", email);
@@ -72,44 +86,96 @@ export default function Signup({ }) {
 
   useEffect(() => {
     if (error) {
-      enqueueSnackbar(error, { variant: 'error' });
+      enqueueSnackbar(error, { variant: "error" });
       dispatch(clearErrors());
     }
     if (isAuthenticated) {
       const isRedirect = window.location.search.split("=")[1];
-      navigate.push(isRedirect ? isRedirect : '/account');
+      navigate.push(isRedirect ? isRedirect : "/account");
     }
-
-  }, [isAuthenticated, error])
+  }, [isAuthenticated, error]);
   return (
-    <PageContainer >
+    <PageContainer>
       <Conatiner elevation="3" selectedTab={selectedTab}>
-        <Tab >
-          <TabItems isSelected={selectedTab === 0} onClick={() => setTab(0)}>Login</TabItems>
-          <TabItems isSelected={selectedTab === 1} onClick={() => setTab(1)}>signup</TabItems>
+        <Tab>
+          <TabItems isSelected={selectedTab === 0} onClick={() => setTab(0)}>
+            Login
+          </TabItems>
+          <TabItems isSelected={selectedTab === 1} onClick={() => setTab(1)}>
+            signup
+          </TabItems>
         </Tab>
-        {selectedTab === 0 ? <Form action="" id='loginForm'>
-          <TextField label="Email" variant="outlined" name="email" value={loginData.email} onChange={handleLoginForm} />
-          <TextField label="Password" variant="outlined" type="password" name="password" value={loginData.password} onChange={handleLoginForm} />
-          <Link to="/forgot-password">Forgot password?</Link>
-          <Button variant="contained" color="primary" onClick={loginUser}>Login</Button>
-        </Form> :
-          <Form action="" id='singupForm'>
-            <TextField label="Email" variant="outlined" name="email" value={signInData.email} onChange={handleSignInForm} />
-            <TextField label="Name" variant="outlined" name="name" value={signInData.name} onChange={handleSignInForm} />
-            <TextField label="Password" type="password" variant="outlined" name="password" value={signInData.password} onChange={handleSignInForm} />
-            <TextField label="Confirm Password" variant="outlined" name="confirmPassword" value={signInData.confirmPassword} onChange={handleSignInForm} />
+        {selectedTab === 0 ? (
+          <Form action="" id="loginForm">
+            <TextField
+              label="Email"
+              variant="outlined"
+              name="email"
+              value={loginData.email}
+              onChange={handleLoginForm}
+            />
+            <TextField
+              label="Password"
+              variant="outlined"
+              type="password"
+              name="password"
+              value={loginData.password}
+              onChange={handleLoginForm}
+            />
+            <Link to="/forgot-password">Forgot password?</Link>
+            <Button variant="contained" color="primary" onClick={loginUser}>
+              Login
+            </Button>
+          </Form>
+        ) : (
+          <Form action="" id="singupForm">
+            <TextField
+              label="Email"
+              variant="outlined"
+              name="email"
+              value={signInData.email}
+              onChange={handleSignInForm}
+            />
+            <TextField
+              label="Name"
+              variant="outlined"
+              name="name"
+              value={signInData.name}
+              onChange={handleSignInForm}
+            />
+            <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              name="password"
+              value={signInData.password}
+              onChange={handleSignInForm}
+            />
+            <TextField
+              label="Confirm Password"
+              variant="outlined"
+              name="confirmPassword"
+              value={signInData.confirmPassword}
+              onChange={handleSignInForm}
+            />
             <input type="file" name="profileImg" onChange={handleSignInForm} />
-
-            <Button variant="contained" color="primary" onClick={registerUser}>Signup</Button>
-          </Form>}
+            {signInData.profileImg && (
+              <img
+                src={signInData.profileImg}
+                width="30px"
+                alt="Avatar Preview"
+              />
+            )}
+            <Button variant="contained" color="primary" onClick={registerUser}>
+              Signup
+            </Button>
+          </Form>
+        )}
         {loading && <Loader />}
-
       </Conatiner>
     </PageContainer>
-
-  )
-};
+  );
+}
 const PageContainer = styled.div`
   display: flex;
   align-items: center;
@@ -121,7 +187,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  a{
+  a {
     text-align: right;
   }
   input::file-selector-button {
@@ -137,7 +203,8 @@ const Form = styled.form`
     color: rgba(0, 0, 0, 0.623);
     background-color: rgb(255, 255, 255);
   }
-  .MuiFormControl-root, .MuiButton-root {
+  .MuiFormControl-root,
+  .MuiButton-root {
     margin: 5px 0;
   }
 `;
@@ -153,13 +220,12 @@ const Conatiner = styled(Paper)`
 const Tab = styled.div`
   display: flex;
   width: 100%;
-
 `;
 const TabItems = styled.p`
   padding: 1vmax;
   width: inherit;
   text-align: center;
-  border-bottom: ${props => props.isSelected && "3px solid tomato"};
-  color: ${props => props.isSelected && "tomato"};
-  transition: all .5s ease-in-out;
+  border-bottom: ${(props) => props.isSelected && "3px solid tomato"};
+  color: ${(props) => props.isSelected && "tomato"};
+  transition: all 0.5s ease-in-out;
 `;

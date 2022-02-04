@@ -1,10 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
 // Default config options
 const defaultOptions = {
-  baseURL: 'http://localhost:5001',
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 };
 
@@ -12,12 +11,15 @@ const defaultOptions = {
 let instance = axios.create(defaultOptions);
 
 // Set the AUTH token for any request
-instance.interceptors.request.use(function (config) {
-  if (localStorage.getItem('session') && JSON.parse(localStorage.getItem('session'))) {
-    let token = JSON.parse(localStorage.getItem('session')).token;
-    config.headers.Authorization = token ? `${token}` : '';
-  }
-  return config;
-});
+// instance.interceptors.request.use(function (config) {
+//   if (
+//     localStorage.getItem("session") &&
+//     JSON.parse(localStorage.getItem("session"))
+//   ) {
+//     let token = JSON.parse(localStorage.getItem("session")).token;
+//     config.headers.Authorization = token ? `${token}` : "";
+//   }
+//   return config;
+// });
 
 export default instance;
