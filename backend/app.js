@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const morgan = require('morgan');
+const path = require('path');
 const initialRoute = require('./routes');
 const ErrorHandler = require('./helpers/ErrorHandler');
 
@@ -15,9 +16,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()); // to configure cors
 app.use(helmet()); // to add secure request headers
 app.use(morgan('combined')); //to log requests
-app.use(cookieParser())
+app.use(cookieParser());
 // routes
+
 app.use(initialRoute);
+app.use(express.static(path.join(__dirname, '../frontend/build/index.html')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../frontend/build/index.html'));
+});
 
 //error handler
 app.use((err, req, res, next) => {
@@ -25,11 +32,11 @@ app.use((err, req, res, next) => {
   err.message = err.message || 'Internal Server Error';
 
   //mongodb casterror handler
-  if (err.name === "CastError") {
+  if (err.name === 'CastError') {
     err = new ErrorHandler('Resource Not found', 400);
   }
 
-  res.status(err.statusCode).json({ message: err.message, success: false })
-})
+  res.status(err.statusCode).json({ message: err.message, success: false });
+});
 
 module.exports = app;
