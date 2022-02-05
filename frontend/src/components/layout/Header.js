@@ -5,7 +5,6 @@ import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import { makeStyles } from "@material-ui/core/styles";
 import Toolbar from "@material-ui/core/Toolbar";
-import AccountCircle from "@material-ui/icons/AccountCircle";
 import ContactsIcon from "@material-ui/icons/Contacts";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import ExitToAppIcon from "@material-ui/icons/ExitToApp";
@@ -21,7 +20,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import profileIcon from "../../images/avatar3.png";
 import logo from "../../images/logo.png";
 import { logout } from "../../store/actions/user";
 const useStyles = makeStyles((theme) => ({
@@ -98,37 +96,41 @@ export default function Header() {
   const actions = [
     {
       icon: (
-        <Link to="/orders">
+        <StyledLink to="/orders">
           {" "}
           <ListAltIcon />
-        </Link>
+        </StyledLink>
       ),
       name: "Orders",
+      to: "/orders",
     },
     {
       icon: (
-        <Link to="/account">
+        <StyledLink to="/account">
           <PersonIcon />
-        </Link>
+        </StyledLink>
       ),
       name: "Profile",
+      to: "/account",
     },
     {
       icon: (
-        <Link to="/cart">
+        <StyledLink to="/cart">
           <ShoppingCartIcon
             style={{ color: cartItems.length > 0 ? "tomato" : "unset" }}
           />
-        </Link>
+        </StyledLink>
       ),
+      to: "/cart",
       name: `Cart(${cartItems.length})`,
     },
     {
       icon: (
-        <Link onClick={user ? logoutUser : null} to="/signin">
+        <StyledLink onClick={user ? logoutUser : null} to="/signin">
           <ExitToAppIcon />
-        </Link>
+        </StyledLink>
       ),
+      to: "/signin",
       name: "Logout",
     },
   ];
@@ -136,22 +138,15 @@ export default function Header() {
   if (user?.role === "admin") {
     actions.unshift({
       icon: (
-        <Link to="/dashboard">
+        <StyledLink to="/dashboard">
           {" "}
           <DashboardIcon />
-        </Link>
+        </StyledLink>
       ),
       name: "Dashboard",
+      to: "/dashboard",
     });
   }
-
-  const handleDirectionChange = (event) => {
-    setDirection(event.target.value);
-  };
-
-  const handleHiddenChange = (event) => {
-    setHidden(event.target.checked);
-  };
 
   const handleClose = () => {
     setOpen(false);
@@ -199,29 +194,14 @@ export default function Header() {
       open={isMobileMenuOpen}
       onClose={handleMobileMenuClose}
     >
-      <MenuItem>
-        <IconButton aria-label="show 4 new mails" color="inherit">
-          <AccountCircle />
-        </IconButton>
-        <p>Messages</p>
-      </MenuItem>
-      <MenuItem>
-        <IconButton aria-label="show 11 new notifications" color="inherit">
-          <AccountCircle />
-        </IconButton>
-        <p>Notifications</p>
-      </MenuItem>
-      <MenuItem onClick={handleProfileMenuOpen}>
-        <IconButton
-          aria-label="account of current user"
-          aria-controls="primary-search-account-menu"
-          aria-haspopup="true"
-          color="inherit"
-        >
-          <AccountCircle />
-        </IconButton>
-        <p>Profile</p>
-      </MenuItem>
+      {actions.map((menu) => (
+        <MenuItem component={Link} to={menu.to} onClick={menu?.onClick}>
+          <IconButton aria-label={menu.name} color="inherit">
+            {menu.icon}
+          </IconButton>
+          <p>{menu.name}</p>
+        </MenuItem>
+      ))}
     </Menu>
   );
   const [isAdmin, setAdmin] = useState(false);
@@ -234,9 +214,9 @@ export default function Header() {
         <AppBar position="fixed" color="default">
           <StyledToolbar>
             <div>
-              <Link to="/">
+              <StyledLink to="/">
                 <img src={logo} width="50px" alt="logo" />{" "}
-              </Link>
+              </StyledLink>
             </div>
             <SearchContainer>
               <input
@@ -278,10 +258,11 @@ export default function Header() {
                     <StyledSpeedDial
                       ariaLabel="SpeedDial example"
                       hidden={hidden}
+                      color="default"
                       onClose={handleClose}
                       onOpen={handleOpen}
                       open={open}
-                      image={user?.avatar?.url || profileIcon}
+                      image={user?.avatar?.url}
                       direction={direction}
                     >
                       {actions.map((action) => (
@@ -325,8 +306,8 @@ const StyledToolbar = styled(Toolbar)`
   }
 `;
 const StyledSpeedDial = styled(SpeedDial)`
-  .MuiSpeedDial-fab {
-    background-image: ${(props) => props.image && `${props.image}`};
+  .MuiFab-primary {
+    background-image: url(${(props) => props.image});
     background-size: contain;
   }
 `;
@@ -335,6 +316,9 @@ const StyledMenu = styled(Menu)`
     display flex,
     flex-direction: column;
   }
+`;
+const StyledLink = styled(Link)`
+  color: #535454;
 `;
 const SpeedDialContainer = styled.div`
   min-width: 60px;

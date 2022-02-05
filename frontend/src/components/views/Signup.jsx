@@ -96,83 +96,94 @@ export default function Signup({}) {
   }, [isAuthenticated, error]);
   return (
     <PageContainer>
-      <Conatiner elevation="3" selectedTab={selectedTab}>
-        <Tab>
-          <TabItems isSelected={selectedTab === 0} onClick={() => setTab(0)}>
-            Login
-          </TabItems>
-          <TabItems isSelected={selectedTab === 1} onClick={() => setTab(1)}>
-            signup
-          </TabItems>
-        </Tab>
-        {selectedTab === 0 ? (
-          <Form action="" id="loginForm">
-            <TextField
-              label="Email"
-              variant="outlined"
-              name="email"
-              value={loginData.email}
-              onChange={handleLoginForm}
-            />
-            <TextField
-              label="Password"
-              variant="outlined"
-              type="password"
-              name="password"
-              value={loginData.password}
-              onChange={handleLoginForm}
-            />
-            <Link to="/forgot-password">Forgot password?</Link>
-            <Button variant="contained" color="primary" onClick={loginUser}>
+      {loading ? (
+        <Loader />
+      ) : (
+        <Conatiner elevation="3" selectedTab={selectedTab}>
+          <Tab>
+            <TabItems isSelected={selectedTab === 0} onClick={() => setTab(0)}>
               Login
-            </Button>
-          </Form>
-        ) : (
-          <Form action="" id="singupForm">
-            <TextField
-              label="Email"
-              variant="outlined"
-              name="email"
-              value={signInData.email}
-              onChange={handleSignInForm}
-            />
-            <TextField
-              label="Name"
-              variant="outlined"
-              name="name"
-              value={signInData.name}
-              onChange={handleSignInForm}
-            />
-            <TextField
-              label="Password"
-              type="password"
-              variant="outlined"
-              name="password"
-              value={signInData.password}
-              onChange={handleSignInForm}
-            />
-            <TextField
-              label="Confirm Password"
-              variant="outlined"
-              name="confirmPassword"
-              value={signInData.confirmPassword}
-              onChange={handleSignInForm}
-            />
-            <input type="file" name="profileImg" onChange={handleSignInForm} />
-            {signInData.profileImg && (
-              <img
-                src={signInData.profileImg}
-                width="30px"
-                alt="Avatar Preview"
+            </TabItems>
+            <TabItems isSelected={selectedTab === 1} onClick={() => setTab(1)}>
+              signup
+            </TabItems>
+          </Tab>
+          {selectedTab === 0 ? (
+            <Form action="" id="loginForm">
+              <TextField
+                label="Email"
+                variant="outlined"
+                name="email"
+                value={loginData.email}
+                onChange={handleLoginForm}
               />
-            )}
-            <Button variant="contained" color="primary" onClick={registerUser}>
-              Signup
-            </Button>
-          </Form>
-        )}
-        {loading && <Loader />}
-      </Conatiner>
+              <TextField
+                label="Password"
+                variant="outlined"
+                type="password"
+                name="password"
+                value={loginData.password}
+                onChange={handleLoginForm}
+              />
+              <Link to="/forgot-password">Forgot password?</Link>
+              <Button variant="contained" color="primary" onClick={loginUser}>
+                Login
+              </Button>
+            </Form>
+          ) : (
+            <Form action="" id="singupForm">
+              <TextField
+                label="Email"
+                variant="outlined"
+                name="email"
+                value={signInData.email}
+                onChange={handleSignInForm}
+              />
+              <TextField
+                label="Name"
+                variant="outlined"
+                name="name"
+                value={signInData.name}
+                onChange={handleSignInForm}
+              />
+              <TextField
+                label="Password"
+                type="password"
+                variant="outlined"
+                name="password"
+                value={signInData.password}
+                onChange={handleSignInForm}
+              />
+              <TextField
+                label="Confirm Password"
+                variant="outlined"
+                name="confirmPassword"
+                value={signInData.confirmPassword}
+                onChange={handleSignInForm}
+              />
+              <input
+                type="file"
+                name="profileImg"
+                onChange={handleSignInForm}
+              />
+              {signInData.profileImg && (
+                <img
+                  src={signInData.profileImg}
+                  width="30px"
+                  alt="Avatar Preview"
+                />
+              )}
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={registerUser}
+              >
+                Signup
+              </Button>
+            </Form>
+          )}
+        </Conatiner>
+      )}
     </PageContainer>
   );
 }
