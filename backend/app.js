@@ -14,7 +14,16 @@ app.use(express.json()); // to access json body data
 app.use(express.static('./backend/images'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()); // to configure cors
-app.use(helmet()); // to add secure request headers
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+        'img-src': ["'self'", 'blob:', 'data:', 'https://res.cloudinary.com/'],
+      },
+    },
+  }),
+); // to add secure request headers
 app.use(morgan('combined')); //to log requests
 app.use(cookieParser());
 // routes
