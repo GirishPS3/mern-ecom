@@ -5,9 +5,8 @@ import { Link, useHistory } from "react-router-dom";
 import { Button } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
-import SideBar from "./Sidebar";
 import { deleteUser, getAllUsers } from "../../../store/actions/user";
-import { clearErrors } from "../../../store/actions/order";
+import { clearErrors } from "../../../store/actions/user";
 import { DELETE_USER_REQUEST } from "../../../store/constants/user";
 import Container  from "./Container";
 import DashboardLayout from '../../common/DashboardLayout';
@@ -43,7 +42,7 @@ const UsersList = ({ history }) => {
     }
 
     dispatch(getAllUsers());
-  }, [dispatch, alert, error, deleteError, history, isDeleted, message]);
+  }, [dispatch, error, deleteError, isDeleted]);
 
   const columns = [
     { field: "id", headerName: "User ID", minWidth: 180, flex: 0.8 },

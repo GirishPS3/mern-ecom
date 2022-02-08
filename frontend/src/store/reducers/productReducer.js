@@ -47,7 +47,7 @@ export const productsReducer = (state = { products: [] }, action) => {
     case ADMIN_PRODUCT_FAIL:
       return {
         loading: false,
-        error: action.payload.error
+        error: true
       }
     case CLEAR_ERROR:
       return {
@@ -75,7 +75,7 @@ export const newProductReducer = (state = { product: {} }, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payload,
+        error: true,
       };
     case NEW_PRODUCT_RESET:
       return {
@@ -118,7 +118,7 @@ export const productReducer = (state = {}, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payload.message,
+        error: true,
       };
     case DELETE_PRODUCT_RESET:
       return {

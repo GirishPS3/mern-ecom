@@ -31,6 +31,7 @@ export default function ProductDetails({ match }) {
   const { success, error: reviewError } = useSelector(
     (state) => state.newReview
   );
+  const { user } = useSelector((state) => state.user);
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const [qty, setqty] = useState(1);
   const [open, setOpen] = useState(false);
@@ -46,6 +47,10 @@ export default function ProductDetails({ match }) {
     qty <= product.stock && setqty(qty + 1);
   };
   const submitReviewToggle = () => {
+    if (!user?.role) {
+      enqueueSnackbar("Please login to continue", { variant: "error" });
+      return;
+    }
     open ? setOpen(false) : setOpen(true);
   };
 
@@ -55,8 +60,12 @@ export default function ProductDetails({ match }) {
     setOpen(false);
   };
   const handleAddtoCart = () => {
-    dispatch(addItemsToCart(id, qty));
-    enqueueSnackbar("Item Added To Cart", { variant: "success" });
+    if (user?.role) {
+      dispatch(addItemsToCart(id, qty));
+      enqueueSnackbar("Item Added To Cart", { variant: "success" });
+    } else {
+      enqueueSnackbar("Please login to continue", { variant: "error" });
+    }
   };
   useEffect(() => {
     if (error) {
@@ -81,13 +90,18 @@ export default function ProductDetails({ match }) {
         <Loader />
       ) : (
         product && (
-          <Grid container alignItems="center" justifyContent="center">
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="center"
+            spacing={2}
+          >
             <CarouselConatiner item xs={12} sm={6} md={7}>
-              {product.images?.map((image) => (
-                <Carousel>
+              <Carousel>
+                {product?.images?.map((image) => (
                   <CarouselImage src={image.url} alt="" />
-                </Carousel>
-              ))}
+                ))}
+              </Carousel>
             </CarouselConatiner>
             <Grid item xs={12} sm={6} md={5}>
               <DetailsContainer>
@@ -242,6 +256,7 @@ const DetailsContainer = styled.div`
 const CarouselConatiner = styled(Grid)`
   &.MuiGrid-root {
     text-align: center;
+    padding-toip: 10px;
   }
 `;
 const CartActions = styled.section`

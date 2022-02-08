@@ -1,8 +1,6 @@
 import React, { memo, useEffect } from "react";
-import Sidebar from "./Sidebar.js";
-import { Typography } from "@material-ui/core";
+import { Paper, Typography } from "@material-ui/core";
 import { Link } from "react-router-dom";
-//import { Doughnut, Line } from "react-chartjs-2";
 import { useSelector, useDispatch } from "react-redux";
 import styled from 'styled-components';
 import { getAdminProduct } from "../../../store/actions/product.js";
@@ -10,7 +8,7 @@ import { getAllUsers } from "../../../store/actions/user.js";
 import { getAllOrders } from "../../../store/actions/order.js";
 import Container from './Container';
 import DashboardLayout from '../../common/DashboardLayout';
-
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 const Dashboard = () => {
   const dispatch = useDispatch();
 
@@ -72,40 +70,88 @@ const Dashboard = () => {
           <div className="dashboardContainer">
             <Typography component="h1">Dashboard</Typography>
 
-            <div className="dashboardSummary">
-              <div>
-                <p>
-                  Total Amount <br /> ₹{totalAmount}
-                </p>
-              </div>
-              <div className="dashboardSummaryBox2">
-                <Link to="/admin/products">
-                  <p>Product</p>
-                  <p>{products && products.length}</p>
-                </Link>
-                <Link to="/admin/orders">
-                  <p>Orders</p>
-                  <p>{orders && orders.length}</p>
-                </Link>
-                <Link to="/admin/users">
-                  <p>Users</p>
-                  <p>{users && users.length}</p>
-                </Link>
-              </div>
-            </div>
+            <SummaryContainer >
+              <SummaryCard elevation={3} color="#0a9396">
+                <div className="icon">
+                  <AccountBalanceWalletIcon fontSize="large" />
+                </div>
+                <div className="detailes">
+                  <span className="numberContent">₹{totalAmount}</span>
+                  <span> Total Amount  </span>
+                </div>
+              </SummaryCard>
+              <SummaryCard component={Link} to="/admin/products" color="#FFD23F">
+                <div className="icon">
+                  <AccountBalanceWalletIcon fontSize="large" />
+                </div>
+                <div className="detailes">
+                  <span className="numberContent">{products && products.length}</span>
+                  <span>Products</span>
+                </div>
+              </SummaryCard>
+              <SummaryCard component={Link} to="/admin/orders" color="#f07167">
+                <div className="icon">
+                  <AccountBalanceWalletIcon fontSize="large" />
+                </div>
+                <div className="detailes">
+                  <span className="numberContent">{orders && orders.length}</span>
+                  <span>Orders</span>
+                </div>
+              </SummaryCard>
+              <SummaryCard component={Link} to="/admin/users" color="#033F63">
+                <div className="icon">
+                  <AccountBalanceWalletIcon fontSize="large" />
+                </div>
+                <div className="detailes">
+                  <span className="numberContent">{users && users.length}</span>
+                  <span>Users</span>
+                </div>
+              </SummaryCard>
+            </SummaryContainer>
 
-            {/*<div className="lineChart">
-    <Line data={lineState} />
-  </div>
-
-  <div className="doughnutChart">
-    <Doughnut data={doughnutState} />
-  </div>*/}
           </div>
         </div>
-      </DashboardLayout>
-    </Container>
+
+      </DashboardLayout >
+    </Container >
   );
 };
 
 export default memo(Dashboard);
+
+const SummaryContainer = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  @media only screen and (max-width: 600px) {
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+`;
+const SummaryCard = styled(Paper)`
+
+&.MuiPaper-root {
+  width: 90%;
+  padding: 10px;
+  margin: 5px;
+  display: flex;
+  text-decoration: none;
+  align-items: center;
+  border-left: 7px solid ${props => props.color};
+  border-radius: 5px;
+  color: #495057;
+  .icon {
+    margin: 1vmax;
+    color: ${props => props.color};
+  }
+  .details{
+    padding: 1vmax;
+    margin-left: 1vmax;
+  }
+  .numberContent {
+    display: block;
+    font-size: x-large;
+    font-weight: bold;
+  }
+
+}
+`;
